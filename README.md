@@ -9,3 +9,4 @@ Currently, two official plugins are available:
 # Zealthy-SE-Exercise
 # Zealthy-SE-Exercise
 # Zealthy-SE-Exercise
+# Zealthy-SE-Exercise
