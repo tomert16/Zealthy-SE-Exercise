@@ -6,7 +6,7 @@ const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 
 export const fetchRequests = createAsyncThunk(
     'requests/fetchRequests', 
-    async () => {
+    async() => {
         const response = await axios.get(`${API_ENDPOINT}/api/requests`);
         return response.data.requests;
     }

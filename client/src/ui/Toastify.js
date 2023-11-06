@@ -27,7 +27,7 @@ export const requestTicketSubmitted = () => {
     });
   };
 
-  export const successgullySentEmail = (request) => {
+  export const successfullySentEmail = (request) => {
     toast.success(`Email successfully sent to ${request.name}✅`, {
       position: "top-center",
       autoClose: 2000,

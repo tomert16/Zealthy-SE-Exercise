@@ -4,35 +4,41 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuth } from "../configs/firebase.config";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchRequests } from "../redux/requestsSlice";
 
 
 const AdminLogin = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [formValues, setFormValues] = useState({
         email: '',
         password: '',
-    })
+    });
+    const [error, setError] = useState(null);
 
     //login functionality
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const {email, password} = formValues;
+            await dispatch(fetchRequests());
             await signInWithEmailAndPassword(firebaseAuth, email, password);
             navigate('/admin');
         } catch (err) {
-            console.error(err);
+            setError('Incorrect email or password');
         }
-    }
+    };
 
     // checks if the user is logged in
     onAuthStateChanged(firebaseAuth, (currentUser) => {
         if (currentUser) {
             navigate('/admin');
         } else {
-            console.log('not logged in');
+            console.error('not logged in');
         }
-    })
+    });
+
   return (
     <LoginContainer>
         <NavBar isAdmin/>
@@ -50,10 +56,11 @@ const AdminLogin = () => {
                     <button type="submit" className="submit">
                         Sign in
                     </button>
-                <p className="signup-link">
+                {/* <p className="signup-link">
                     No account?
                     <a href="">Sign up</a>
-                </p>
+                </p> */}
+                {error && <p className="error-message">{error}</p>}
             </form>
         </div>
     </LoginContainer>
@@ -125,5 +132,10 @@ const LoginContainer = styled.div`
     .signup-link a {
         text-decoration: underline;
   }
+    .error-message {
+        color: red;
+        font-size: 1.2rem;
+        text-align: center;
+    }
 `;
 export default AdminLogin;

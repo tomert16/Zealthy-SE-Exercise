@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 
 //Project's firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBxXJCuEHJ11KBzSQjLComJvFjGN-EoOh8",
-    authDomain: "zealthy-help-desk.firebaseapp.com",
-    projectId: "zealthy-help-desk",
-    storageBucket: "zealthy-help-desk.appspot.com",
-    messagingSenderId: "483151450962",
-    appId: "1:483151450962:web:f073230af969dfb79de08b"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
   };
 
   //initialize Firebase

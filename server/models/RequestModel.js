@@ -7,7 +7,7 @@ const db = new sqlite3.Database('./database.db');
 db.run(`CREATE TABLE IF NOT EXISTS requests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL,
         reason TEXT NOT NULL,
         status TEXT DEFAULT "New" NOT NULL,
         date TEXT NOT NULL
@@ -25,7 +25,8 @@ const RequestModel = {
                     console.error(err);
                     callback(err);
                 } else {
-                    callback(null)
+                    const id = this.lastID;
+                    callback(null, id)
                 }
             }
         )

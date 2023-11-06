@@ -1,7 +1,7 @@
 const { RequestModel } = require('../models/RequestModel.js'); 
 
 module.exports.createNewRequest = async (req, res) => {
-    const { name, email, reason, date } = req.body;
+    const {name, email, reason, date } = req.body;
     RequestModel.createRequest(name, email, reason, date, (err) => {
         if (err) {
             return res.status(404).json({ msg: 'Error creating new request' });

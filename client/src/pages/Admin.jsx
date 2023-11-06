@@ -6,10 +6,15 @@ import NavBar from '../components/NavBar';
 import { DataGrid } from '@mui/x-data-grid';
 import RequestManagementCard from '../components/RequestManagementCard';
 import { ToastContainer } from 'react-toastify';
+import { firebaseAuth } from '../configs/firebase.config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { AiOutlineInfoCircle } from'react-icons/ai';
 
 
 const Admin = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const requests = useSelector(selectRequests);
     const [selectedRow, setSelectedRow] = useState(null);
     const [toggleCard, setToggleCard] = useState(false);
@@ -33,7 +38,9 @@ const Admin = () => {
       {field: 'date', headerName: 'Date', width: 180},
       {width: 130,
         renderCell: (params, index) => [
-          <button key={index} onClick={() => handleEditRequest(params.row)}>Edit</button>
+          <button key={index} onClick={() => handleEditRequest(params.row)} className="request-info-btn">
+            <AiOutlineInfoCircle />
+          </button>
         ]
       }
     ];
@@ -55,6 +62,13 @@ const Admin = () => {
       setSelectedRow(request);
       setToggleCard(true);
     }
+
+    //checks if the user is logged in, if not then redirect to login page
+    onAuthStateChanged(firebaseAuth, (currentUser) => {
+      if (!currentUser) {
+        navigate('/admin_login');
+      }
+    })
 
 
   return (
@@ -81,12 +95,24 @@ const Admin = () => {
 }
 
 const Container = styled.div`
-.header {
-  text-align: center;
-  text-decoration: underline;
-}
+  .header {
+    text-align: center;
+    text-decoration: underline;
+  }
   .data-table {
     background-color: #fff;
+  }
+  .request-info-btn {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    svg {
+      font-size: 1.5rem;
+      &:hover {
+        color: green;
+      }
+    }
   }
 `;
 export default Admin;

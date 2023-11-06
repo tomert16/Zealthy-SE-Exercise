@@ -4,28 +4,32 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { updateRequest } from '../redux/requestsSlice';
 import { AiOutlineCloseCircle } from'react-icons/ai';
-import { successgullySentEmail } from '../ui/Toastify';
+import { successfullySentEmail } from '../ui/Toastify';
 
 const RequestManagementCard = ({ request, setToggleCard }) => {
     const dispatch = useDispatch();
     const [status, setStatus] = useState(request.status);
     const [toggleMessage, setToggleMessage] = useState(false);
     const [message, setMessage] = useState('');
-
+    // function to update the status of the request
     const handleStatusUpdate = (e) => {
         e.preventDefault();
-        const updatedData = {
-            id: request.id,
-            status: status,
-        };
-        dispatch(updateRequest(updatedData));
-        window.location.reload();
+        try {
+            const updatedData = {
+                id: request.id,
+                status: status,
+            };
+            dispatch(updateRequest(updatedData));
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+        }
     };
-
+    //funtion to send an email response to the patient
     const handleEmailMessage = (e) => {
         e.preventDefault();
         console.log(`Would normally send email here to ${request.email} with body: ${message}`);
-        successgullySentEmail(request);
+        successfullySentEmail(request);
     }
 
   return (
