@@ -1,33 +1,30 @@
 const { Pool } = require('pg');
 
 //create a new postgres database
-// const pool = new Pool({
-//     user: process.env.DB_USER,
-//     host: process.env.DB_HOST,
-//     database: process.env.DB_NAME,
-//     password: process.env.DB_PASSWORD,
-//     port: process.env.DB_PORT,
-// });;
 const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
-  })
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});;
 
 //create the request table if it doesn't exist
-// pool.query(`CREATE TABLE IF NOT EXISTS requests (
-//         id SERIAL PRIMARY KEY,
-//         name TEXT NOT NULL,
-//         email TEXT NOT NULL,
-//         reason TEXT NOT NULL,
-//         status TEXT DEFAULT 'New' NOT NULL,
-//         date TEXT NOT NULL
-//     );`,
-//     (err, res) => {
-//         if (err) {
-//             console.error(err.message);
-//         } else {
-//             console.log('Request table created!');
-//         }
-//     });
+pool.query(`CREATE TABLE IF NOT EXISTS requests (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        reason TEXT NOT NULL,
+        status TEXT DEFAULT 'New' NOT NULL,
+        date TEXT NOT NULL
+    );`,
+    (err, res) => {
+        if (err) {
+            console.error(err.message);
+        } else {
+            console.log('Request table created!');
+        }
+    });
 
 //model functions to handle the database CRUD operations
 const RequestModel = {
