@@ -1,84 +1,89 @@
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 
 //create a new sqlite3 database
-const db = new sqlite3.Database('./database.db');
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});;
 
 //create the request table if it doesn't exist
-db.run(`CREATE TABLE IF NOT EXISTS requests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+pool.query(`CREATE TABLE IF NOT EXISTS requests (
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT NOT NULL,
         reason TEXT NOT NULL,
-        status TEXT DEFAULT "New" NOT NULL,
+        status TEXT DEFAULT 'New' NOT NULL,
         date TEXT NOT NULL
-    );
-`);
+    );`,
+    (err, res) => {
+        if (err) {
+            console.error(err.message);
+        } else {
+            console.log('Request table created!');
+        }
+    });
 
 //model functions to handle the database CRUD operations
 const RequestModel = {
     createRequest: (name, email, reason, date, callback) => {
-        db.run(
-            `INSERT INTO requests (name, email, reason, date) VALUES (?,?,?,?);`,
-            [name, email, reason, date],
-            (err) => {
-                if (err) {
-                    console.error(err);
-                    callback(err);
-                } else {
-                    const id = this.lastID;
-                    callback(null, id)
-                }
-            }
-        )
-    },
-    allRequests: (callback) => {
-        db.all(`SELECT * FROM requests`, (err, rows) => {
+        const query = {
+            text: 'INSERT INTO requests (name, email, reason, date) VALUES ($1, $2, $3, $4) RETURNING id',
+            values: [name, email, reason, date]
+        };
+        pool.query(query, (err, res) => {
             if (err) {
-                console.error(err.message);
+                console.error('Error creating request', err.message);
                 callback(err);
             } else {
-                callback(null, rows);
+                callback(null);
             }
         })
     },
-    getRequestById: (id, callback) => {
-        db.all(
-            `SELECT * FROM requests WHERE id = ?`,
-            [id],
-            (err, rows) => {
-                if (err) {
-                    console.error(err.message);
-                    callback(err);
-                } else {
-                    const request = rows[0] || null;
-                    callback(null, request);
-                }
+    allRequests: (callback) => {
+        const query = `SELECT * FROM requests;`;
+        pool.query(query, (err, res) => {
+            if (err) {
+                console.error('Error getting requests', err.message);
+                callback(err);
+            } else {
+                callback(null, res.rows);
             }
-        )
+        });
+    },
+    getRequestById: (id, callback) => {
+        const query = {
+            text: 'SELECT * FROM requests WHERE id = $1',
+            values: [id]
+        };
+        pool.query(query, (err, res) => {
+            if (err) {
+                console.error('Error getting request', err.message);
+                callback(err);
+            } else {
+                const request = res.rows[0] || null;
+                callback(null, request);
+            }
+        });
     },
     updateRequest: (id, status, callback) => {
-        db.run(
-            `UPDATE requests SET status = ? WHERE id = ?`,
-            [status, id],
-            (err) => {
-                if (err) {
-                    console.error(err.message);
-                    callback(err);
-                } else {
-                    callback(null, this.changes);
-                }
+        const query = {
+            text: 'UPDATE requests SET status = $1 WHERE id = $2',
+            values: [status, id]
+        };
+        pool.query(query, (err, res) => {
+            if (err) {
+                console.error('Error updating request', err.message);
+                callback(err);
+            } else {
+                callback(null, res.changes);
             }
-        )
+        });
     }
 }
 
-//close the database connection
-const closedDB = () => {
-    db.close((err) => {
-        if (err) return console.error(err.message);
-    });
-};
-
-module.exports = { RequestModel, closedDB };
+module.exports = { RequestModel };
 
 

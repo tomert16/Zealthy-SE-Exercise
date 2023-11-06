@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
+const {Pool} = require('pg');
 const requestRoutes = require('./routes/RequestRoutes.js');
 // environment variables config
 const path = require('path');
@@ -13,11 +13,18 @@ require('dotenv').config({
 
 const PORT = process.env.PORT || 3000;
 
-//connect server to database
-new sqlite3.Database('./database.db', sqlite3.OPEN_READWRITE, (err) => {
-    if (err) return console.error(err.message);
-    console.log('connection to database established!');
-})
+// Connect server to the PostgreSQL database
+    const pool = new Pool({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        database: process.env.DB_NAME,
+        password: process.env.DB_PASSWORD,
+        port: process.env.DB_PORT,
+    });
+
+    pool.connect()
+    .then(() => console.log('Connected to the PostgreSQL database'))
+    .catch((err) => console.error('Error connecting to the database', err));
 
 //middlewares to help run the server with ease
 app.use(cors({
