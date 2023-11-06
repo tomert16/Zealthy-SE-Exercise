@@ -14,17 +14,17 @@ require('dotenv').config({
 const PORT = process.env.PORT || 3000;
 
 // Connect server to the PostgreSQL database
-    const pool = new Pool({
-        user: process.env.DB_USER,
-        host: process.env.DB_HOST,
-        database: process.env.DB_NAME,
-        password: process.env.DB_PASSWORD,
-        port: process.env.DB_PORT,
-    });
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});
 
-    pool.connect()
-    .then(() => console.log('Connected to the PostgreSQL database'))
-    .catch((err) => console.error('Error connecting to the database', err));
+pool.connect()
+.then(() => console.log('Connected to the PostgreSQL database'))
+.catch((err) => console.error('Error connecting to the database', err));
 
 //middlewares to help run the server with ease
 app.use(cors({
