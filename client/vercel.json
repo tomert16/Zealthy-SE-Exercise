@@ -11,11 +11,5 @@
             "src": "/(.*)",
             "dest": "/"
         }
-    ],
-    "redirects": [
-        {
-          "source": "/legacy/:path*",
-          "destination": "/new/:path*"
-        }
-      ]
+    ]
 }
